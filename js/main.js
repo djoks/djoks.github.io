@@ -366,6 +366,20 @@
     }
   }
 
+  // On narrow screens the tab list scrolls sideways. This keeps the selected tab
+  // in view by scrolling the list itself, never the page.
+  function revealTab(tabs, tab) {
+    var list = tabs.el;
+    if (list.scrollWidth <= list.clientWidth) return;
+    var pad = parseFloat(getComputedStyle(list).paddingLeft) || 0;
+    var left = tab.offsetLeft - pad;
+    var right = tab.offsetLeft + tab.offsetWidth + pad - list.clientWidth;
+    var target = list.scrollLeft;
+    if (left < list.scrollLeft) target = left;
+    else if (right > list.scrollLeft) target = right;
+    if (target !== list.scrollLeft) list.scrollTo({ left: target, behavior: reduceMotion ? 'auto' : 'smooth' });
+  }
+
   function fadeOutPanel(panel) {
     panel.classList.add('is-leaving');
     var done = function () {
@@ -391,6 +405,7 @@
       });
       if (leaving) fadeOutPanel(leaving);
       placeTabDot(tabs, false);
+      revealTab(tabs, tab);
     }
     if (moveFocus) tab.focus();
   }
@@ -455,6 +470,7 @@
     if (!tablist) return;
     var list = toArray(tablist.querySelectorAll('[role="tab"]'));
     var tabs = {
+      el: tablist,
       list: list,
       dot: tablist.querySelector('.tab-dot'),
       wrap: tablist.closest('.skills-tabs'),
