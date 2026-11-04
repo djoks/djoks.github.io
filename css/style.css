@@ -8,6 +8,7 @@
    Color     Every color is a token below. No blues or purples, no gradients, no white backgrounds.
    Spacing   Steps of 8, 12, 16, 24, 32, 48 and 96px, with 2px adjustments for optical alignment.
    Shape     Radius 4px on tiles, buttons and images, 0 on rules. Borders 1px. No shadows.
+             The coffee chat bubble is the one exception: 12px radius and an off-white fill.
    Layout    12-column grid, 1200px max. Each section: label column (3) and body (9), with a 40px
              gutter above 900px. Magazine, not SaaS. */
 
@@ -1224,13 +1225,58 @@ b { font-weight: 500; }
   width: clamp(200px, 19vw, 280px);
   margin-top: calc(clamp(200px, 19vw, 280px) * -0.403);
 }
+/* Cinematic hover: the color grades in slowly while the cup pushes in, then the bubble pops up.
+   Both filter lists name the same functions in the same order so every step interpolates. */
 .contact-coffee img {
   width: 100%;
   height: auto;
-  filter: grayscale(1) brightness(0.9);
-  transition: filter 0.8s var(--ease);
+  filter: grayscale(1) brightness(0.85) contrast(1.08) saturate(1);
+  transition:
+    filter 1.6s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 2.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.contact-coffee:hover img { filter: none; }
+.contact-coffee:hover img {
+  filter: grayscale(0) brightness(1) contrast(1) saturate(1.08);
+  transform: scale(1.04);
+}
+/* Centered over the cup, with the tail on the bottom edge pointing down at it. */
+.coffee-bubble {
+  --tail-h: 6px;
+  position: absolute;
+  bottom: calc(100% + 14px);
+  left: 50%;
+  translate: -50% 0;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: var(--color-text);
+  color: var(--color-bg);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(6px) scale(0.9);
+  transform-origin: 50% calc(100% + var(--tail-h));
+  transition: opacity 0.25s var(--ease), transform 0.25s var(--ease);
+}
+.coffee-bubble::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -7px;
+  border: 7px solid transparent;
+  border-top: var(--tail-h) solid var(--color-text);
+  border-bottom: 0;
+}
+.contact-coffee:hover .coffee-bubble {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.4s var(--ease) 0.5s,
+    transform 0.6s cubic-bezier(0.34, 1.4, 0.64, 1) 0.5s;
+}
 @media (max-width: 1179px) {
   .contact-coffee { display: none; }
 }
