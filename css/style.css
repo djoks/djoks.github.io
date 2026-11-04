@@ -169,7 +169,22 @@ b { font-weight: 500; }
   letter-spacing: -0.02em;
   white-space: nowrap;
 }
-.wordmark .dot { color: var(--color-accent); }
+/* Archivo Black's period is square, so the dot is drawn as a circle in the glyph's place.
+   The period is 0.212em by 0.199em at a 0.061em side bearing, with a 0.333em advance. An
+   equal-area circle is 0.23em, centered at 0.167em, and sinks 0.012em below the baseline
+   to match the overshoot of the "s". */
+.wordmark .dot {
+  display: inline-block;
+  forced-color-adjust: none;
+  width: 0.23em;
+  height: 0.23em;
+  margin: 0 0.051em 0 0.052em;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: transparent;
+  overflow: hidden;
+  vertical-align: -0.012em;
+}
 
 .site-nav {
   --frame-pad-x: 14px;
